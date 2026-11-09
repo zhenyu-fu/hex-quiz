@@ -36,7 +36,7 @@
         <button class="mode-card mode-book" data-go="collection">
           <span class="mode-ico">📖</span>
           <span class="mode-name">图鉴学习</span>
-          <span class="mode-desc">浏览全部符文，可遮挡名称做回忆训练</span>
+          <span class="mode-desc">浏览全部符文图标，点击查看名称与效果</span>
         </button>
       </div>
 
@@ -119,11 +119,6 @@
         <button class="btn-ghost" id="bookBackBtn">← 返回</button>
         <div class="book-tools">
           <input type="search" class="search-input" id="searchInput" placeholder="搜索符文名称…" />
-          <label class="toggle">
-            <input type="checkbox" id="maskToggle" />
-            <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            <span class="toggle-label">遮挡名称·回忆模式</span>
-          </label>
         </div>
       </div>
       <div class="chip-group book-filters" id="bookTierChips">
@@ -135,6 +130,21 @@
       <div class="book-grid" id="bookGrid"></div>
       <p class="book-empty" id="bookEmpty" hidden>没有找到匹配的符文</p>
     </section>
+
+    <!-- ════════ 符文详情弹窗 ════════ -->
+    <div class="modal-mask" id="hexModal" hidden>
+      <div class="modal-card" id="hexModalCard" role="dialog" aria-modal="true" aria-label="符文详情">
+        <button class="modal-close" id="hexModalClose" aria-label="关闭">×</button>
+        <div class="modal-icon-wrap" id="mIconWrap">
+          <img class="modal-icon" id="mIcon" alt="" />
+          <div class="icon-fallback" data-fb id="mIconFallback" hidden>?</div>
+        </div>
+        <h3 class="modal-name" id="mName"></h3>
+        <span class="modal-tier" id="mTier"></span>
+        <p class="modal-desc" id="mDesc"></p>
+        <p class="modal-memo" id="mMemo" hidden></p>
+      </div>
+    </div>
 
   </main>
 

@@ -259,7 +259,7 @@
   $("#startBtn").addEventListener("click", startQuiz);
 
   /* ---------- 图鉴 ---------- */
-  var bookCfg = { tier: 0, kw: "", masked: false };
+  var bookCfg = { tier: 0, kw: "" };
   $all("#bookTierChips .chip").forEach(function (c) {
     c.addEventListener("click", function () {
       $all("#bookTierChips .chip").forEach(function (x) { x.classList.remove("is-active"); });
@@ -272,15 +272,10 @@
     bookCfg.kw = e.target.value.trim();
     renderBook();
   });
-  $("#maskToggle").addEventListener("change", function (e) {
-    bookCfg.masked = e.target.checked;
-    renderBook();
-  });
   $("#bookBackBtn").addEventListener("click", function () { showView("home"); });
 
   function renderBook() {
     var grid = $("#bookGrid");
-    grid.classList.toggle("masked", bookCfg.masked);
     grid.innerHTML = "";
     var kw = bookCfg.kw.toLowerCase();
     var list = DATA.filter(function (x) {
@@ -296,28 +291,45 @@
       var cell = document.createElement("button");
       cell.className = "book-cell";
       cell.dataset.tier = t;
-      var fbChar = x.n[0] || "?";
+      cell.title = "点击查看详情";
       cell.innerHTML =
         '<img class="bc-icon" loading="lazy" src="icons/' + x.i + '" onerror="HexImgErr(this)" alt="">' +
-        '<span class="bc-fallback" data-fb hidden>' + fbChar + '</span>' +
-        '<span class="bc-body">' +
-          '<span class="bc-name"></span>' +
-          '<span class="bc-tier">' + TIER_NAME[t] + '</span>' +
-          '<span class="bc-desc"></span>' +
-          (x.m ? '<span class="bc-memo"></span>' : '') +
-        '</span>';
-      $(".bc-name", cell).textContent = x.n;
-      $(".bc-desc", cell).textContent = x.d;
-      if (x.m) $(".bc-memo", cell).textContent = x.m;
-      cell.addEventListener("click", function () {
-        var revealed = cell.classList.toggle("is-revealed");
-        $(".bc-name", cell).classList.toggle("revealed", revealed);
-        $(".bc-tier", cell).classList.toggle("revealed", revealed);
-      });
+        '<span class="bc-fallback" data-fb hidden>' + (x.n[0] || "?") + '</span>';
+      cell.addEventListener("click", function () { openHexModal(x); });
       frag.appendChild(cell);
     });
     grid.appendChild(frag);
   }
+
+  /* ---------- 符文详情弹窗 ---------- */
+  var hexModal = $("#hexModal");
+  function openHexModal(x) {
+    var t = tierOf(x.i);
+    var icon = $("#mIcon");
+    icon.hidden = false;
+    var fb = $("#mIconFallback");
+    fb.hidden = true;
+    fb.textContent = x.n[0] || "?";
+    icon.src = "icons/" + x.i;
+    $("#mIconWrap").dataset.tier = t;
+    $("#mName").textContent = x.n;
+    var tierEl = $("#mTier");
+    tierEl.textContent = TIER_NAME[t];
+    tierEl.dataset.tier = t;
+    $("#mDesc").textContent = x.d;
+    var memo = $("#mMemo");
+    if (x.m) { memo.hidden = false; memo.textContent = x.m; }
+    else { memo.hidden = true; memo.textContent = ""; }
+    hexModal.hidden = false;
+  }
+  function closeHexModal() { hexModal.hidden = true; }
+  $("#hexModalClose").addEventListener("click", closeHexModal);
+  hexModal.addEventListener("click", function (e) {
+    if (e.target === hexModal) closeHexModal();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !hexModal.hidden) closeHexModal();
+  });
 
   /* ---------- 键盘快捷键（A/B/C/D + 回车） ---------- */
   document.addEventListener("keydown", function (e) {
