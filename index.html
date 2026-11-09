@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>海克斯图鉴 · 看图识强化符文</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- 顶部 -->
+  <header class="topbar">
+    <button class="logo-btn" id="goHome" title="返回首页">
+      <span class="logo-mark">⬡</span>
+      <span class="logo-text">海克斯图鉴<small>HEX&nbsp;DATABASE</small></span>
+    </button>
+    <div class="topbar-stats" id="bestStat"></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ════════ 首页 ════════ -->
+    <section class="view" id="view-home">
+      <div class="hero">
+        <h1 class="hero-title">看图标<span class="accent">认海克斯</span></h1>
+        <p class="hero-sub">金铲铲之战 · 当前赛季强化符文（海克斯）共 <b id="totalCount">0</b> 个<br/>看图记符文，测测你能认出多少</p>
+      </div>
+
+      <div class="mode-cards">
+        <button class="mode-card mode-quiz" data-go="setup">
+          <span class="mode-ico">🎯</span>
+          <span class="mode-name">闯关测试</span>
+          <span class="mode-desc">看图标四选一，逐题闯关，挑战连击与满分</span>
+        </button>
+        <button class="mode-card mode-book" data-go="collection">
+          <span class="mode-ico">📖</span>
+          <span class="mode-name">图鉴学习</span>
+          <span class="mode-desc">浏览全部符文，可遮挡名称做回忆训练</span>
+        </button>
+      </div>
+
+      <!-- 测试设置 -->
+      <div class="setup" id="setup">
+        <div class="setup-row">
+          <span class="setup-label">选择等阶</span>
+          <div class="chip-group" id="tierChips">
+            <button class="chip is-active" data-tier="0">全部</button>
+            <button class="chip tier-1" data-tier="1">白银</button>
+            <button class="chip tier-2" data-tier="2">黄金</button>
+            <button class="chip tier-3" data-tier="3">棱彩</button>
+          </div>
+        </div>
+        <div class="setup-row">
+          <span class="setup-label">题目数量</span>
+          <div class="chip-group" id="countChips">
+            <button class="chip is-active" data-count="10">10 题</button>
+            <button class="chip" data-count="20">20 题</button>
+            <button class="chip" data-count="50">50 题</button>
+            <button class="chip" data-count="0">全部</button>
+          </div>
+        </div>
+        <button class="btn-primary" id="startBtn">开始闯关</button>
+      </div>
+    </section>
+
+    <!-- ════════ 闯关测试 ════════ -->
+    <section class="view" id="view-quiz" hidden>
+      <div class="quiz-head">
+        <button class="btn-ghost" id="quitBtn">← 退出</button>
+        <div class="quiz-progress"><div class="quiz-progress-bar" id="progressBar"></div></div>
+        <div class="quiz-meta">
+          <span class="meta-item">题目 <b id="qIndex">1</b>/<b id="qTotal">10</b></span>
+          <span class="meta-item">得分 <b id="qScore">0</b></span>
+          <span class="meta-item streak-item">连击 <b id="qStreak">0</b></span>
+        </div>
+      </div>
+
+      <div class="quiz-card" id="quizCard">
+        <span class="tier-badge" id="qTierBadge">白银</span>
+        <div class="quiz-icon-wrap">
+          <img class="quiz-icon" id="qIcon" alt="海克斯图标" />
+          <div class="icon-fallback" id="qIconFallback" hidden>?</div>
+        </div>
+        <p class="quiz-tip">这个强化符文叫做？</p>
+        <div class="options" id="options"></div>
+        <div class="answer-panel" id="answerPanel" hidden>
+          <div class="answer-title" id="answerTitle"></div>
+          <p class="answer-desc" id="answerDesc"></p>
+          <button class="btn-primary" id="nextBtn">下一题</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ 结算 ════════ -->
+    <section class="view" id="view-result" hidden>
+      <div class="result-card">
+        <h2 class="result-title" id="resultTitle">闯关完成</h2>
+        <div class="score-ring" id="scoreRing">
+          <span class="score-num" id="resultScore">0</span>
+          <span class="score-total" id="resultTotal">/10</span>
+        </div>
+        <div class="result-sub" id="resultSub"></div>
+        <div class="result-actions">
+          <button class="btn-primary" id="againBtn">再来一局</button>
+          <button class="btn-ghost" id="resultHomeBtn">返回首页</button>
+        </div>
+        <div class="wrong-wrap" id="wrongWrap" hidden>
+          <h3 class="wrong-title">错题回顾</h3>
+          <div class="wrong-list" id="wrongList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ 图鉴 ════════ -->
+    <section class="view" id="view-collection" hidden>
+      <div class="book-head">
+        <button class="btn-ghost" id="bookBackBtn">← 返回</button>
+        <div class="book-tools">
+          <input type="search" class="search-input" id="searchInput" placeholder="搜索符文名称…" />
+          <label class="toggle">
+            <input type="checkbox" id="maskToggle" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">遮挡名称·回忆模式</span>
+          </label>
+        </div>
+      </div>
+      <div class="chip-group book-filters" id="bookTierChips">
+        <button class="chip is-active" data-tier="0">全部</button>
+        <button class="chip tier-1" data-tier="1">白银</button>
+        <button class="chip tier-2" data-tier="2">黄金</button>
+        <button class="chip tier-3" data-tier="3">棱彩</button>
+      </div>
+      <div class="book-grid" id="bookGrid"></div>
+      <p class="book-empty" id="bookEmpty" hidden>没有找到匹配的符文</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">题库数据来自 dataj.cc · 仅供学习娱乐 · 版权归原作者所有</footer>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
