@@ -75,7 +75,7 @@
   });
 
   /* ---------- 闯关核心 ---------- */
-  var quiz = { list: [], idx: 0, score: 0, streak: 0, bestStreak: 0, wrong: [], cur: null, locked: false };
+  var quiz = { list: [], idx: 0, score: 0, streak: 0, bestStreak: 0, wrong: [], cur: null, locked: false, optsShown: false };
 
   function buildPool() {
     var pool = cfg.tier === 0 ? DATA : DATA.filter(function (x) { return tierOf(x.i) === cfg.tier; });
@@ -127,6 +127,9 @@
     icon.src = "icons/" + cur.i;
 
     $("#answerPanel").hidden = true;
+    quiz.optsShown = false;
+    $("#showOptionsBtn").hidden = false;
+    $("#options").hidden = true;
     $("#options").innerHTML = "";
     var opts = makeOptions(cur);
     var keys = ["A", "B", "C", "D"];
@@ -232,6 +235,15 @@
     if (quiz.idx < quiz.list.length - 1) { quiz.idx++; loadQuestion(); }
     else { finishQuiz(); }
   });
+  $("#showOptionsBtn").addEventListener("click", function () {
+    quiz.optsShown = true;
+    this.hidden = true;
+    var box = $("#options");
+    box.hidden = false;
+    box.classList.remove("opts-in");
+    void box.offsetWidth;
+    box.classList.add("opts-in");
+  });
   $("#quitBtn").addEventListener("click", function () { showView("home"); });
   $("#againBtn").addEventListener("click", function () { startQuiz(); });
   $("#resultHomeBtn").addEventListener("click", function () { showView("home"); });
@@ -309,12 +321,15 @@
 
   /* ---------- 键盘快捷键（A/B/C/D + 回车） ---------- */
   document.addEventListener("keydown", function (e) {
-    if (!$("#view-quiz").hidden && !quiz.locked) {
+    if (!$("#view-quiz").hidden && !quiz.locked && quiz.optsShown) {
       var idx = ["a", "b", "c", "d"].indexOf(e.key.toLowerCase());
       if (idx >= 0) {
         var btns = $all("#options .option");
         if (btns[idx]) btns[idx].click();
       }
+    } else if (!$("#view-quiz").hidden && !quiz.locked && !quiz.optsShown && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      $("#showOptionsBtn").click();
     } else if (!$("#view-quiz").hidden && quiz.locked && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
       $("#nextBtn").click();
