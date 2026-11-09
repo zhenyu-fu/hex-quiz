@@ -288,11 +288,15 @@
       cell.innerHTML =
         '<img class="bc-icon" loading="lazy" src="icons/' + x.i + '" onerror="HexImgErr(this)" alt="">' +
         '<span class="bc-fallback" data-fb hidden>' + fbChar + '</span>' +
-        '<span class="bc-name"></span>' +
-        '<span class="bc-tier">' + TIER_NAME[t] + '</span>' +
-        '<span class="bc-desc"></span>';
+        '<span class="bc-body">' +
+          '<span class="bc-name"></span>' +
+          '<span class="bc-tier">' + TIER_NAME[t] + '</span>' +
+          '<span class="bc-desc"></span>' +
+          (x.m ? '<span class="bc-memo"></span>' : '') +
+        '</span>';
       $(".bc-name", cell).textContent = x.n;
       $(".bc-desc", cell).textContent = x.d;
+      if (x.m) $(".bc-memo", cell).textContent = x.m;
       cell.addEventListener("click", function () {
         var revealed = cell.classList.toggle("is-revealed");
         $(".bc-name", cell).classList.toggle("revealed", revealed);
