@@ -75,7 +75,8 @@
   });
 
   /* ---------- 闯关核心 ---------- */
-  var quiz = { list: [], idx: 0, score: 0, streak: 0, bestStreak: 0, wrong: [], cur: null, locked: false, optsShown: false };
+  var quiz = { list: [], idx: 0, score: 0, streak: 0, bestStreak: 0, wrong: [], cur: null, locked: false, optsShown: false, _autoTimer: null };
+  function clearAutoTimer() { if (quiz._autoTimer) { clearTimeout(quiz._autoTimer); quiz._autoTimer = null; } }
 
   function buildPool() {
     var pool = cfg.tier === 0 ? DATA : DATA.filter(function (x) { return tierOf(x.i) === cfg.tier; });
@@ -104,6 +105,7 @@
   }
 
   function loadQuestion() {
+    clearAutoTimer();
     quiz.locked = false;
     var cur = quiz.list[quiz.idx];
     quiz.cur = cur;
@@ -182,6 +184,13 @@
     $("#answerDesc").textContent = correct.d;
     var nextBtn = $("#nextBtn");
     nextBtn.textContent = quiz.idx === quiz.list.length - 1 ? "查看结果" : "下一题";
+
+    if (isRight) {
+      quiz._autoTimer = setTimeout(function () {
+        quiz._autoTimer = null;
+        nextBtn.click();
+      }, 650);
+    }
   }
 
   function finishQuiz() {
